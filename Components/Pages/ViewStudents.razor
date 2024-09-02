@@ -1,0 +1,49 @@
+﻿@page "/ViewStudents"
+
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<div class="mb-10">
+    <PageTitle>View Students</PageTitle>
+    <h2>View All Students</h2>
+</div>
+
+@if (students is null) {
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover mt-3"> <!--Bootstrap CSS styling added, mt adds margin from upper element-->
+        <thead class="table-dark"> <!--Head of the table-->
+            <th>Id</th>
+            <th>Name</th>
+            <th class ="text-end">Age</th>
+            <th class="text-end">Year</th> <!--Text of price is on the right-->
+            <th>Mobile Number</th>
+            <th>Date of Birth</th>
+            <th></th>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.Name</td>
+                    <td class="text-end">@student.Age</td>
+                    <td class="text-end">@student.Year</td>
+                    <td>@student.MobileNumber</td>
+                    <td>@student.DOB</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<StudentDetails>? students;
+    protected override void OnInitialized() // When client initialised then array is populated
+    {
+        students = DataManagement.ViewAllStudents();
+    }
+}

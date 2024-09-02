@@ -1,9 +1,10 @@
 ﻿@page "/AddStudent"
 
 @inject NavigationManager NavigationManager
+
 @rendermode InteractiveServer
 
-<div class="mb-3">
+<div class="mb-10">
     <PageTitle>Add a Student</PageTitle>
     <h2>Add a Student</h2>
 </div>
@@ -70,6 +71,7 @@ else
     private void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(studentDetails);
+        DataManagement.AddNewStudent(studentDetails);
         NavigationManager.NavigateTo("/");
     }
 }

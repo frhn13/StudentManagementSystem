@@ -1,5 +1,4 @@
 using StudentManagementSystem.Components;
-using StudentManagementSystem.Models; // Added here so that the functions in these folders can be used across the whole project
 
 var builder = WebApplication.CreateBuilder(args);
 
