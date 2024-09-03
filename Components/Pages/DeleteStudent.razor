@@ -1,0 +1,36 @@
+﻿@inject NavigationManager navigationManager
+<!--Interactive server must be declared in modal otherwise page refresh won't function properly-->
+@rendermode InteractiveServer
+
+<div class="modal fade" id="@MakeModalID(studentDetails)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--Displays pop-up-->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete @studentDetails!.Name?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="@ConfirmDeletion">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public StudentDetails? studentDetails { get; set; }
+
+    public static string MakeModalID(StudentDetails? studentDetails) // Makes HTML ID for each dialogue box based on corresponding student info
+    {
+        ArgumentNullException.ThrowIfNull(studentDetails);
+        return $"deleteModel-{studentDetails.Id}";
+    }
+
+    private void ConfirmDeletion() // Deletes game when button click
+    {
+        DataManagement.DeleteStudent(studentDetails!.Id); // Compiler ignores that the game could be null
+        navigationManager.Refresh();
+    }
+}
