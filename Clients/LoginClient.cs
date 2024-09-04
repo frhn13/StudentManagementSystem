@@ -4,36 +4,26 @@ namespace StudentManagementSystem.Clients
 {
     public class LoginClient
     {
-        public LoginDetails loggedInUser = new() { Username=String.Empty, Password=String.Empty};
+        private LoginDetails loggedInUser = new() { Username=string.Empty, Password=string.Empty};
 
         public LoginDetails GetLoggedInUser() => loggedInUser;
 
-        public static bool CreateAccount(SignUpDetails signUpDetails)
+        public void ResetLogin()
+        {
+            loggedInUser.Name = null;
+            loggedInUser.Username = string.Empty;
+            loggedInUser.Password = string.Empty;
+            loggedInUser.Role = null;
+        }
+
+        public static void CreateAccount(SignUpDetails signUpDetails)
         {
             try
             {
-                string[] accounts = System.IO.File.ReadAllLines(@"accounts.csv");
-                List<StudentDetails> students = DataManagement.ViewAllStudents();
-                foreach (StudentDetails student in students)
+                using (StreamWriter file = new StreamWriter(@"accounts.csv", true))
                 {
-                    foreach (string account in accounts) // Checks if account already exists with entered name or username
-                    {
-                        string[] accountData = account.Split(',');
-                        if (accountData[0].Equals(signUpDetails.Name) || accountData[1].Equals(signUpDetails.Username))
-                        {
-                            return false;
-                        }
-                    }
-                    if (student.Name.Equals(signUpDetails.Name))  // Checks if student name already exists in list of students
-                    {
-                        using (StreamWriter file = new StreamWriter(@"accounts.csv", true))
-                        {
-                            file.WriteLine($"{signUpDetails.Name},{signUpDetails.Username},{signUpDetails.Password},user");
-                            return true;
-                        }
-                    }
+                    file.WriteLine($"{signUpDetails.Name},{signUpDetails.Username},{signUpDetails.Password},user");
                 }
-                return false;
             }
             catch (FileNotFoundException ex)
             {
@@ -65,12 +55,6 @@ namespace StudentManagementSystem.Clients
                 throw new ApplicationException("Oopsies!");
             }
         }
-
-        public bool LogoutUser(LoginDetails loginDetails)
-        {
-            return false;
-        }
-
         public static void ViewAllAccounts()
         {
 

@@ -64,9 +64,7 @@ else
     private void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(signUpDetails);
-        if (LoginClient.CreateAccount(signUpDetails))
-        {
-            NavigationManager.NavigateTo("/Login");
-        }
+        LoginClient.CreateAccount(signUpDetails);
+        NavigationManager.NavigateTo("/Login");
     }
 }

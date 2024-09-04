@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StudentManagementSystem.CustomValidators;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
 {
@@ -7,6 +8,7 @@ namespace StudentManagementSystem.Models
         public string? Name { get; set; }
         [Required]
         [StringLength(50)]
+        [LoginUsernameValidator]
         public required string Username { get; set; }
         [Required]
         [StringLength(50)]

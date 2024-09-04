@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StudentManagementSystem.CustomValidators;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
 {
@@ -6,9 +7,11 @@ namespace StudentManagementSystem.Models
     {
         [Required]
         [StringLength(50)]
+        [SignUpNameValidator]
         public required string Name { get; set; }
         [Required]
         [StringLength(50)]
+        [SignUpUsernameValidator]
         public required string Username { get; set; }
         [Required]
         [MaxLength(15, ErrorMessage = "Password can't be more than 15 characters")]

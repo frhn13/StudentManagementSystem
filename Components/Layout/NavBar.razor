@@ -1,9 +1,38 @@
-﻿<!-- As a heading -->
+﻿@inject LoginClient LoginClient
+@inject NavigationManager NavigationManager
+
+@if (LoginClient.GetLoggedInUser().Username.Equals(String.Empty))
+{
+    <!-- As a heading -->
+    <nav class="navbar bg-body-tertiary data" data-bs-theme="dark">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Student Virtual Portal</span>
+            <a class="btn btn-primary" role="button" href="/">Home</a>
+            <a class="btn btn-primary" role="button" href="/Login">Login</a>
+            <a class="btn btn-primary" role="button" href="/SignUp">Sign Up</a>
+        </div>
+    </nav>
+}
+else if (LoginClient.GetLoggedInUser().Role!.Equals("admin"))
+{
     <nav class="navbar bg-body-tertiary data" data-bs-theme="dark">
         <div class="container">
             <span class="navbar-brand mb-0 h1">Student Management</span>
-        <a class="btn btn-primary" role="button" href="/">Home</a>
+            <a class="btn btn-primary" role="button" href="/">Home</a>
             <a class="btn btn-primary" role="button" href="/AddStudent">Add a Student</a>
             <a class="btn btn-primary" role="button" href="/ViewStudents">View Students</a>
+            <a class="btn btn-primary" role="button" href="/">Log Out</a>
         </div>
     </nav>
+}
+else
+{
+    <nav class="navbar bg-body-tertiary data" data-bs-theme="dark">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">@LoginClient.GetLoggedInUser().Username's Account</span>
+            <a class="btn btn-primary" role="button" href="/">Home</a>
+            <a class="btn btn-primary" role="button" href="/">Log Out</a>
+        </div>
+    </nav>
+}
+
