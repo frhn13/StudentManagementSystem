@@ -17,7 +17,6 @@ namespace StudentManagementSystem.Models
         [Required(ErrorMessage = "The Confirm Password field is required")]
         [Compare("Password", ErrorMessage = "Passwords must be the same")]
         public required string ConfirmPassword { get; set; }
-        public int UserId { get; set; }
         public string? Role {  get; set; }
     }
 }

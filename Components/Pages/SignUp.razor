@@ -51,8 +51,7 @@ else
 @code {
     [SupplyParameterFromForm]
     private SignUpDetails? signUpDetails { get; set; }
-
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         signUpDetails = new()
             {
@@ -65,7 +64,9 @@ else
     private void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(signUpDetails);
-        NavigationManager.NavigateTo("/");
+        if (LoginClient.CreateAccount(signUpDetails))
+        {
+            NavigationManager.NavigateTo("/Login");
+        }
     }
-
 }
