@@ -13,6 +13,5 @@ namespace StudentManagementSystem.Models
         [Required]
         [Range (1, 3, ErrorMessage = "Must choose between 1st, 2nd or 3rd semester")]
         public int Semester { get; set; }
-
     }
 }

@@ -52,12 +52,85 @@ namespace StudentManagementSystem.Clients
             ["Physical Environments", "Geopolitical Challenges", "Urban Development", "Global Climate Systems", "Environment and Society"]
             ];
 
-        public static Course[] GetCourses() => courses;
-        public static string[][] GetModules() => modules;
+        public static Course[] GetCourseChoices() => courses;
+        public static string[][] GetModuleChoices() => modules;
 
         public static void AddNewModule(CourseDetails courseDetails)
         {
+            try
+            {
+                int lineCount = File.ReadLines("modules.csv").Count();
+                using (StreamWriter file = new StreamWriter(@"modules.csv", true))
+                {
+                    file.WriteLine($"{lineCount+1},{courseDetails.Name},{courseDetails.Course},{courseDetails.Module},{courseDetails.Semester}");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ApplicationException("Oopsies!");
+            }
+        }
 
+        public static List<CourseDetails> ViewModules(string studentName)
+        {
+            List<CourseDetails> modulesList = [];
+            try
+            {
+                string[] modules = File.ReadAllLines(@"modules.csv");
+                foreach (string module in modules)
+                {
+                    string[] moduleData = module.Split(',');
+                    
+                    if (moduleData[1].Equals(studentName))
+                    {
+                        CourseDetails courseDetails = new()
+                        {
+                            Id = int.Parse(moduleData[0]),
+                            Name = moduleData[1],
+                            Course = moduleData[2],
+                            Module = moduleData[3],
+                            Semester = int.Parse(moduleData[4])
+                        };
+                        modulesList.Add(courseDetails);
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ApplicationException("Oopsies!");
+            }
+            return modulesList;
+        }
+
+        public static void DeleteModule(CourseDetails courseDetails)
+        {
+            string removedModule = "";
+            try
+            {
+                string[] modules = File.ReadAllLines(@"modules.csv");
+                foreach (string module in modules)
+                {
+                    string[] moduleData = module.Split(',');
+                    if (int.Parse(moduleData[0]) == courseDetails.Id)
+                    {
+                        removedModule = module;
+                        break;
+                    }
+                }
+                modules = modules.Where(x => x != removedModule).ToArray();
+                using (StreamWriter file = new StreamWriter(@"modules.csv", false))
+                {
+                    for (int i = 0; i < modules.Length; i++)
+                    {
+                        string[] moduleData = modules[i].Split(',');
+                        file.WriteLine($"{moduleData[0]},{moduleData[1]},{moduleData[2]},{moduleData[3]},{moduleData[4]}");
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ApplicationException("Oopsies!");
+            }
         }
     }
 }

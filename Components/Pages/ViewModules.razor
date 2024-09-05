@@ -1,7 +1,59 @@
-﻿@page "/ViewModules/{Id:int}"
+﻿@page "/ViewModules"
 
-<h3>ViewModules</h3>
+@inject NavigationManager NavigationManager
+@inject LoginClient LoginClient
+
+<div class="mb-10">
+    <PageTitle>View Modules</PageTitle>
+    <h2>View @LoginClient.GetLoggedInUser().Username's Modules</h2>
+</div>
+
+@if (modules is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-striped table-bordered table-hover mt-3">
+        <!--Bootstrap CSS styling added, mt adds margin from upper element-->
+        <thead class="table-dark"> <!--Head of the table-->
+        <th>No.</th>
+        <th>Course</th>
+        <th class="text-end">Module</th>
+        <th class="text-end">Semester</th>
+        <th></th>
+        </thead>
+        <tbody>
+            @for(int x=1; x<modules.Count() + 1; x++)
+            {
+                <tr>
+                    <td>@x</td>
+                    <td>@modules[x - 1].Course</td>
+                    <td class="text-end">@modules[x - 1].Module</td>
+                    <td class="text-end">@modules[x - 1].Semester</td>
+                    <td>
+                        <div class="d-flex">
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetModalId(modules[x - 1])">
+                                <!--data-bs-target shows the modal (dialogue box)-->
+                                <i class="bi bi-x-square"></i>
+                            </button>
+                        </div>
+                        <DeleteModule courseDetails="@modules[x - 1]" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
-
+    private List<CourseDetails>? modules;
+    protected override void OnInitialized() // When client initialised then array is populated
+    {
+        modules = CourseManagement.ViewModules(LoginClient.GetLoggedInUser().Name!);
+    }
+    private string GetModalId(CourseDetails module) // Gets the HTML ID of modal for corresponding student
+    {
+        return $"#{DeleteModule.MakeModalID(module)}";
+    }
 }

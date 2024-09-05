@@ -23,7 +23,7 @@ else
                 <ValidationSummary />
                 <div class="mb-3">
                     <label for="course" class="form-label">Course</label>
-                    <InputSelect id="course" class="form-control" @bind-Value="courseDetails.Course" oninput="@setModule">
+                    <InputSelect id="course" class="form-control" @bind-Value="courseDetails.Course" oninput="@SetModule">
                         <option value="">Select a Course</option>
                         @foreach (var course in courses)
                         {
@@ -62,8 +62,8 @@ else
     string heading = string.Empty;
     int courseChoice;
 
-    Course[] courses = CourseManagement.GetCourses();
-    string[][] modules = CourseManagement.GetModules();
+    Course[] courses = CourseManagement.GetCourseChoices();
+    string[][] modules = CourseManagement.GetModuleChoices();
 
     protected override void OnParametersSet()
     {
@@ -81,9 +81,10 @@ else
     {
         courseDetails!.Name = LoginClient.GetLoggedInUser().Name;
         CourseManagement.AddNewModule(courseDetails);
+        NavigationManager.NavigateTo("/ViewModules");
     }
 
-    private void setModule(ChangeEventArgs e)
+    private void SetModule(ChangeEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(e);
         try
