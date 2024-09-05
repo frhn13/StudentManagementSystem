@@ -54,7 +54,7 @@ else
     private List<StudentDetails>? students;
     protected override void OnInitialized() // When client initialised then array is populated
     {
-        students = DataManagement.ViewAllStudents();
+        students = StudentManagement.ViewAllStudents();
     }
     private string GetModalId(StudentDetails student) // Gets the HTML ID of modal for corresponding student
     {

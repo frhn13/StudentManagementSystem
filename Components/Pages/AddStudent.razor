@@ -76,7 +76,7 @@ else
         }
         else if (Id is not null)
         {
-            studentDetails = DataManagement.GetStudent(Id.Value); // Gets value of Id if it is not null
+            studentDetails = StudentManagement.GetStudent(Id.Value); // Gets value of Id if it is not null
             title = $"Edit {studentDetails.Name}";
             heading = $"Edit {studentDetails.Name}'s Details";
         }
@@ -86,11 +86,11 @@ else
         ArgumentNullException.ThrowIfNull(studentDetails);
         if (Id is null)
         {
-            DataManagement.AddNewStudent(studentDetails);
+            StudentManagement.AddNewStudent(studentDetails);
         }
         else
         {
-            DataManagement.EditStudent(studentDetails);
+            StudentManagement.EditStudent(studentDetails);
         }
         NavigationManager.NavigateTo("/");
     }

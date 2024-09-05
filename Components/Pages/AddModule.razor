@@ -1,0 +1,104 @@
+﻿@page "/AddModule"
+
+@inject LoginClient LoginClient
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<div class="mb-10">
+    <PageTitle>@title</PageTitle>
+    <h2>@heading</h2>
+</div>
+
+@if (courseDetails is null)
+{
+    <p>Currently Loading...</p>
+}
+else
+{
+    <div class="row">
+        <div class="flex-center">
+            <EditForm Model="@courseDetails" FormName="AddStudent" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="mb-3">
+                    <label for="course" class="form-label">Course</label>
+                    <InputSelect id="course" class="form-control" @bind-Value="courseDetails.Course" oninput="@setModule">
+                        <option value="">Select a Course</option>
+                        @foreach (var course in courses)
+                        {
+                            <option value="@course.Name">@course.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => courseDetails.Course" />
+                </div>
+                <div class="mb-3">
+                    <label for="module" class="form-label">Module</label>
+                    <InputSelect id="module" class="form-control" @bind-Value="courseDetails.Module">
+                    <option value="">Select a Module</option>
+                    @foreach (var module in modules[courseChoice])
+                    {
+                        <option value="@module">@module</option>
+                    }
+                    </InputSelect>
+                    <ValidationMessage For="() => courseDetails.Module" />
+                </div>
+                <div class="mb-3 form-check">
+                    <label for="year" class="form-label">Semester</label>
+                    <InputNumber id="year" class="form-control" @bind-Value="courseDetails.Semester" />
+                    <ValidationMessage For="() => courseDetails.Semester" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save Module</button>
+                <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromForm]
+    private CourseDetails? courseDetails { get; set; }
+    string title = string.Empty;
+    string heading = string.Empty;
+    int courseChoice;
+
+    Course[] courses = CourseManagement.GetCourses();
+    string[][] modules = CourseManagement.GetModules();
+
+    protected override void OnParametersSet()
+    {
+        courseChoice = 0;
+        courseDetails = new()
+        {
+            Course = string.Empty,
+            Module = string.Empty
+        };
+        title = "Add Module";
+        heading = "Add a Module";
+    }
+
+    private void HandleSubmit()
+    {
+        courseDetails!.Name = LoginClient.GetLoggedInUser().Name;
+        CourseManagement.AddNewModule(courseDetails);
+    }
+
+    private void setModule(ChangeEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+        try
+        {
+            foreach (Course course in courses)
+            {
+                if (course.Name.Equals(e.Value))
+                {
+                    courseChoice = course.Id;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            courseChoice = 0;
+        }
+    }
+}

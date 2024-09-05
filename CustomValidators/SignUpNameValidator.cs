@@ -11,7 +11,7 @@ namespace StudentManagementSystem.CustomValidators
             try
             {
                 string[] accounts = System.IO.File.ReadAllLines(@"accounts.csv");
-                List<StudentDetails> students = DataManagement.ViewAllStudents();
+                List<StudentDetails> students = StudentManagement.ViewAllStudents();
 
                 foreach (string account in accounts) // Checks if account already exists with entered name
                 {
