@@ -13,6 +13,10 @@
 {
     <p>Loading...</p>
 }
+else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || (LoginClient.GetLoggedInUser().Role!.Equals("user") && Id is not null))
+{
+    <p>Page inaccessible</p>
+}
 else
 {
     <table class="table table-striped table-bordered table-hover mt-3">

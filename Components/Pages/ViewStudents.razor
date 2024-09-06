@@ -1,6 +1,7 @@
 ﻿@page "/ViewStudents"
 
 @inject NavigationManager NavigationManager
+@inject LoginClient LoginClient
 
 <div class="mb-10">
     <PageTitle>View Students</PageTitle>
@@ -9,6 +10,10 @@
 
 @if (students is null) {
     <p>Loading...</p>
+}
+else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || (LoginClient.GetLoggedInUser().Role!.Equals("user")))
+{
+    <p>Page inaccessible</p>
 }
 else
 {

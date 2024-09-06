@@ -2,6 +2,7 @@
 @page "/EditStudent/{Id:int}"
 
 @inject NavigationManager NavigationManager
+@inject LoginClient LoginClient
 
 @rendermode InteractiveServer
 
@@ -13,6 +14,10 @@
 @if (studentDetails is null)
 {
     <p>Currently Loading...</p>
+}
+else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || LoginClient.GetLoggedInUser().Role!.Equals("user"))
+{
+    <p>Page inaccessible</p>
 }
 else
 {

@@ -1,7 +1,7 @@
 ﻿@inject LoginClient LoginClient
 @inject NavigationManager NavigationManager
 
-@if (LoginClient.GetLoggedInUser().Username.Equals(String.Empty))
+@if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty))
 {
     <!-- As a heading -->
     <nav class="navbar bg-body-tertiary data" data-bs-theme="dark">
@@ -21,7 +21,7 @@ else if (LoginClient.GetLoggedInUser().Role!.Equals("admin"))
             <a class="btn btn-primary" role="button" href="/">Home</a>
             <a class="btn btn-primary" role="button" href="/AddStudent">Add a Student</a>
             <a class="btn btn-primary" role="button" href="/ViewStudents">View Students</a>
-            <a class="btn btn-primary" role="button" href="/">Log Out</a>
+            <a class="btn btn-primary" role="button" href="/Logout">Log Out</a>
         </div>
     </nav>
 }

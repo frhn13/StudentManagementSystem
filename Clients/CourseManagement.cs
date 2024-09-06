@@ -55,15 +55,24 @@ namespace StudentManagementSystem.Clients
         public static Course[] GetCourseChoices() => courses;
         public static string[][] GetModuleChoices() => modules;
 
-        public static void AddNewModule(CourseDetails courseDetails)
+        public static bool AddNewModule(CourseDetails courseDetails)
         {
             try
             {
+                List<CourseDetails> previousCourses = ViewModules(courseDetails.Name!);
+                foreach (CourseDetails module in previousCourses)
+                {
+                    if (courseDetails.Name!.Equals(module.Name) && courseDetails.Module.Equals(module.Module))
+                    {
+                        return false;
+                    }
+                }
                 int lineCount = File.ReadLines("modules.csv").Count();
                 using (StreamWriter file = new StreamWriter(@"modules.csv", true))
                 {
                     file.WriteLine($"{lineCount+1},{courseDetails.Name},{courseDetails.Course},{courseDetails.Module},{courseDetails.Semester}");
                 }
+                return true;
             }
             catch (FileNotFoundException ex)
             {

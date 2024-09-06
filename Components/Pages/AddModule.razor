@@ -14,6 +14,10 @@
 {
     <p>Currently Loading...</p>
 }
+else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || LoginClient.GetLoggedInUser().Role!.Equals("admin"))
+{
+    <p>Page inaccessible</p>
+}
 else
 {
     <div class="row">
@@ -80,8 +84,8 @@ else
     private void HandleSubmit()
     {
         courseDetails!.Name = LoginClient.GetLoggedInUser().Name;
-        CourseManagement.AddNewModule(courseDetails);
-        NavigationManager.NavigateTo("/ViewModules");
+        if (CourseManagement.AddNewModule(courseDetails))
+            NavigationManager.NavigateTo("/ViewModules");
     }
 
     private void SetModule(ChangeEventArgs e)

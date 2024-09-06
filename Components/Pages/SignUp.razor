@@ -1,6 +1,7 @@
 ﻿@page "/SignUp"
 
 @inject NavigationManager NavigationManager
+@inject LoginClient LoginClient
 
 @rendermode InteractiveServer
 
@@ -12,6 +13,10 @@
 @if (signUpDetails is null)
 {
     <p>Currently Loading...</p>
+}
+else if (!LoginClient.GetLoggedInUser().Username.Equals(string.Empty))
+{
+    <p>Page inaccessible</p>
 }
 else
 {
@@ -46,7 +51,6 @@ else
         </div>
     </div>
 }
-
 
 @code {
     [SupplyParameterFromForm]
