@@ -57,16 +57,21 @@ namespace StudentManagementSystem.Clients
 
         public static bool AddNewModule(CourseDetails courseDetails)
         {
+            int semesterOneModules = 0;
+            int semesterTwoModules = 0;
+            int semesterThreeModules = 0;
             try
             {
                 List<CourseDetails> previousCourses = ViewModules(courseDetails.Name!);
                 foreach (CourseDetails module in previousCourses)
                 {
-                    if (courseDetails.Name!.Equals(module.Name) && courseDetails.Module.Equals(module.Module))
-                    {
-                        return false;
-                    }
+                    if (courseDetails.Name!.Equals(module.Name) && courseDetails.Module.Equals(module.Module)) { return false; }
+                    if (module.Semester == 1) { semesterOneModules++; }
+                    else if (module.Semester == 2) { semesterTwoModules++; }
+                    else { semesterThreeModules++; }
                 }
+                if (courseDetails.Semester == 1 && semesterOneModules >= 5 || courseDetails.Semester == 2 && semesterTwoModules >= 5 || courseDetails.Semester == 3 && semesterThreeModules >= 5)
+                { return false; }
                 int lineCount = File.ReadLines("modules.csv").Count();
                 using (StreamWriter file = new StreamWriter(@"modules.csv", true))
                 {
