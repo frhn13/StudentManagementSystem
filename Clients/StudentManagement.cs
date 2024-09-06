@@ -21,7 +21,7 @@ namespace StudentManagementSystem.Clients
             }
         }
 
-        public static void DeleteStudent(int studentId)
+        public static void DeleteStudent(StudentDetails studentDetails)
         {
             string removedStudent = "";
             try
@@ -30,8 +30,14 @@ namespace StudentManagementSystem.Clients
                 foreach (string student in students)
                 {
                     string[] studentData = student.Split(',');
-                    if (int.Parse(studentData[0]) == studentId)
+                    if (int.Parse(studentData[0]) == studentDetails.Id)
                     {
+                        LoginClient.DeleteAccount(studentDetails);
+                        List<CourseDetails> courseDetails = CourseManagement.ViewModules(studentDetails.Name);
+                        foreach(CourseDetails module in courseDetails)
+                        {
+                            CourseManagement.DeleteModule(module);
+                        }
                         removedStudent = student;
                         break;
                     }

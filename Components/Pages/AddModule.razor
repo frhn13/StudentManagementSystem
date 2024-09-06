@@ -23,7 +23,7 @@ else
                 <ValidationSummary />
                 <div class="mb-3">
                     <label for="course" class="form-label">Course</label>
-                    <InputSelect id="course" class="form-control" @bind-Value="courseDetails.Course" oninput="@SetModule">
+                    <InputSelect id="course" class="form-control" @bind-Value="courseDetails.Course" @oninput="@SetModule">
                         <option value="">Select a Course</option>
                         @foreach (var course in courses)
                         {

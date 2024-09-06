@@ -34,12 +34,16 @@ else
                     <td>@student.DOB</td>
                     <td>
                         <div class="d-flex">
-                            <a class="btn btn-primary me-2" role="button" href="/EditStudent/@student.Id">
+                            <a class="btn btn-primary me-2" role="button" href="/EditStudent/@student.Id" title="Edit Student Details">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetModalId(student)"> <!--data-bs-target shows the modal (dialogue box)-->
+                            <a class="btn btn-primary me-2" role="button" href="/ViewModules/@student.Id" title="View Student Modules">
+                                <i class="bi bi-book"></i>
+                            </a>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetModalId(student)" title="Delete Student"> <!--data-bs-target shows the modal (dialogue box)-->
                                 <i class="bi bi-x-square"></i>
                             </button>
+                            
                         </div>
                         <DeleteStudent studentDetails="@student" />
                     </td>

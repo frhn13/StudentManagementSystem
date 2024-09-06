@@ -30,7 +30,7 @@
 
     private void ConfirmDeletion() // Deletes game when button click
     {
-        StudentManagement.DeleteStudent(studentDetails!.Id); // Compiler ignores that the game could be null
+        StudentManagement.DeleteStudent(studentDetails!); // Compiler ignores that the game could be null
         navigationManager.Refresh();
     }
 }

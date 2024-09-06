@@ -1,0 +1,21 @@
+﻿@page "/Logout"
+
+@inject NavigationManager NavigationManager
+@inject LoginClient LoginClient
+
+@rendermode InteractiveServer
+
+<PageTitle>Log Out</PageTitle>
+
+<h1>Log Out?</h1>
+
+<button type="submit" class="btn btn-primary" @onclick="@ResetDetails">Log Out</button>
+<a role="button" class="btn btn-secondary" href="/">Cancel</a>
+
+@code {
+    private void ResetDetails()
+    {
+        LoginClient.ResetLogin();
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -1,4 +1,5 @@
 ﻿@page "/ViewModules"
+@page "/ViewModules/{Id:int}"
 
 @inject NavigationManager NavigationManager
 @inject LoginClient LoginClient
@@ -33,7 +34,7 @@ else
                     <td class="text-end">@modules[x - 1].Semester</td>
                     <td>
                         <div class="d-flex">
-                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetModalId(modules[x - 1])">
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetModalId(modules[x - 1])" title="Remove Module">
                                 <!--data-bs-target shows the modal (dialogue box)-->
                                 <i class="bi bi-x-square"></i>
                             </button>
@@ -47,10 +48,24 @@ else
 }
 
 @code {
+    [Parameter]
+    public int? Id {get; set;}
     private List<CourseDetails>? modules;
+    string heading = string.Empty;
+
     protected override void OnInitialized() // When client initialised then array is populated
     {
-        modules = CourseManagement.ViewModules(LoginClient.GetLoggedInUser().Name!);
+        if (Id is null)
+        {
+            modules = CourseManagement.ViewModules(LoginClient.GetLoggedInUser().Name!);
+            heading = $"{LoginClient.GetLoggedInUser().Username}'s Modules";
+        }
+        else if (Id is not null)
+        {
+            StudentDetails student = StudentManagement.GetStudent(Id.Value); // .Value lets you get value even when it is null
+            modules = CourseManagement.ViewModules(student.Name);
+            heading = $"{student.Name}'s Modules";
+        }
     }
     private string GetModalId(CourseDetails module) // Gets the HTML ID of modal for corresponding student
     {
