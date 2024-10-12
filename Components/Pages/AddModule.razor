@@ -14,7 +14,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || LoginClient.GetLoggedInUser().Role!.Equals("admin"))
+else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || LoginClient.GetLoggedInDetails().Role!.Equals("admin"))
 {
     <p>Page inaccessible</p>
 }
@@ -83,7 +83,7 @@ else
 
     private void HandleSubmit()
     {
-        courseDetails!.Name = LoginClient.GetLoggedInUser().Name;
+        courseDetails!.Name = LoginClient.GetLoggedInDetails().Name;
         if (CourseManagement.AddNewModule(courseDetails))
             NavigationManager.NavigateTo("/ViewModules");
     }

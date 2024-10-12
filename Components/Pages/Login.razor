@@ -14,7 +14,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (!loginClient.GetLoggedInUser().Username.Equals(string.Empty))
+else if (!loginClient.GetLoggedInDetails().Username.Equals(string.Empty))
 {
     <p>Page inaccessible</p>
 }
@@ -22,7 +22,7 @@ else
 {
     <div class="row">
         <div class="flex-center">
-            <EditForm Model="@loginDetails" FormName="Login" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@loginDetails" FormName="Login" OnValidSubmit="HandleSubmitAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="mb-3">
@@ -35,7 +35,7 @@ else
                     <InputText id="password" type="Password" class="form-control" @bind-Value="loginDetails.Password" />
                     <ValidationMessage For="() => loginDetails.Password" />
                 </div>
-                <button type="submit" class="btn btn-primary">Create Account</button>
+                <button type="submit" class="btn btn-primary">Login</button>
                 <a role="button" class="btn btn-secondary" href="/">Cancel</a>
             </EditForm>
         </div>
@@ -55,7 +55,7 @@ else
                 Password = String.Empty
             };
     }
-    private async void HandleSubmit()
+    private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(loginDetails);
         var user = await loginClient.LoginUserAsync(loginDetails.Username);

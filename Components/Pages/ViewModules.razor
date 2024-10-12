@@ -6,14 +6,14 @@
 
 <div class="mb-10">
     <PageTitle>View Modules</PageTitle>
-    <h2>View @LoginClient.GetLoggedInUser().Username's Modules</h2>
+    <h2>View @LoginClient.GetLoggedInDetails().Username's Modules</h2>
 </div>
 
 @if (modules is null)
 {
     <p>Loading...</p>
 }
-else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || (LoginClient.GetLoggedInUser().Role!.Equals("user") && Id is not null))
+else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || (LoginClient.GetLoggedInDetails().Role!.Equals("user") && Id is not null))
 {
     <p>Page inaccessible</p>
 }
@@ -61,8 +61,8 @@ else
     {
         if (Id is null)
         {
-            modules = CourseManagement.ViewModules(LoginClient.GetLoggedInUser().Name!);
-            heading = $"{LoginClient.GetLoggedInUser().Username}'s Modules";
+            modules = CourseManagement.ViewModules(LoginClient.GetLoggedInDetails().Name!);
+            heading = $"{LoginClient.GetLoggedInDetails().Username}'s Modules";
         }
         else if (Id is not null)
         {

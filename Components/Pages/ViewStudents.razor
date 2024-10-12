@@ -2,6 +2,7 @@
 
 @inject NavigationManager NavigationManager
 @inject LoginClient LoginClient
+@inject StudentManagement StudentManagement
 
 <div class="mb-10">
     <PageTitle>View Students</PageTitle>
@@ -11,7 +12,7 @@
 @if (students is null) {
     <p>Loading...</p>
 }
-else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || (LoginClient.GetLoggedInUser().Role!.Equals("user")))
+else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || (LoginClient.GetLoggedInDetails().Role!.Equals("user")))
 {
     <p>Page inaccessible</p>
 }
@@ -59,10 +60,10 @@ else
 }
 
 @code {
-    private List<StudentDetails>? students;
-    protected override void OnInitialized() // When client initialised then array is populated
+    private StudentDetails[]? students;
+    protected override async Task OnInitializedAsync() // When client initialised then array is populated
     {
-        students = StudentManagement.ViewAllStudents();
+        students = await StudentManagement.ViewAllStudentsAsync();
     }
     private string GetModalId(StudentDetails student) // Gets the HTML ID of modal for corresponding student
     {

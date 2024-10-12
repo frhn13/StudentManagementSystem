@@ -32,6 +32,8 @@ if (!app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
+System.IO.File.WriteAllText("loggedInDetails.csv", string.Empty); // Clears contents of file used to sstore logged in user
+
 app.UseStaticFiles();
 app.UseAntiforgery();
 

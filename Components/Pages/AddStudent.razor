@@ -3,6 +3,7 @@
 
 @inject NavigationManager NavigationManager
 @inject LoginClient LoginClient
+@inject StudentManagement StudentManagement
 
 @rendermode InteractiveServer
 
@@ -15,7 +16,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty) || LoginClient.GetLoggedInUser().Role!.Equals("user"))
+else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || LoginClient.GetLoggedInDetails().Role!.Equals("user"))
 {
     <p>Page inaccessible</p>
 }
@@ -23,7 +24,7 @@ else
 {
     <div class="row">
         <div class="flex-center">
-            <EditForm Model="@studentDetails" FormName="AddStudent" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@studentDetails" FormName="AddStudent" OnValidSubmit="HandleSubmitAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="mb-3">
@@ -66,7 +67,7 @@ else
     private string title = string.Empty;
     private string heading = string.Empty;
 
-    protected override void OnParametersSet()
+    protected async override Task OnParametersSetAsync()
     {
         if (Id is null)
         {
@@ -81,21 +82,21 @@ else
         }
         else if (Id is not null)
         {
-            studentDetails = StudentManagement.GetStudent(Id.Value); // Gets value of Id if it is not null
+            studentDetails = await StudentManagement.GetStudentAsync(Id.Value); // Gets value of Id if it is not null
             title = $"Edit {studentDetails.Name}";
             heading = $"Edit {studentDetails.Name}'s Details";
         }
     }
-    private void HandleSubmit()
+    private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(studentDetails);
         if (Id is null)
         {
-            StudentManagement.AddNewStudent(studentDetails);
+            await StudentManagement.AddNewStudentAsync(studentDetails);
         }
         else
         {
-            StudentManagement.EditStudent(studentDetails);
+            await StudentManagement.EditStudentAsync(studentDetails);
         }
         NavigationManager.NavigateTo("/");
     }

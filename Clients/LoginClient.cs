@@ -5,58 +5,25 @@ namespace StudentManagementSystem.Clients
 {
     public class LoginClient(HttpClient httpClient)
     {
-        private LoginDetails loggedInUser = new() { Id=0, Username=string.Empty, Password=string.Empty};
-
-        public LoginDetails GetLoggedInUser() => loggedInUser;
-
         public void ResetLogin()
-        {
-            loggedInUser.Id = 0;
-            loggedInUser.Name = null;
-            loggedInUser.Username = string.Empty;
-            loggedInUser.Password = string.Empty;
-            loggedInUser.Role = null;
-        }
-
-        public async Task CreateAccountAsync(SignUpDetails signUpDetails) =>
-            await httpClient.PostAsJsonAsync("accounts", signUpDetails);
-
-        public async Task<LoginDetails> LoginUserAsync(string username) =>
-            await httpClient.GetFromJsonAsync<LoginDetails>($"accounts/userAccount/{username}") ?? null!;
-
-        public async Task DeleteAccountAsync(string name) => await httpClient.DeleteAsync($"accounts/userAccount/{name}");
-
-        public static void CreateAccount(SignUpDetails signUpDetails)
         {
             try
             {
-                using (StreamWriter file = new StreamWriter(@"accounts.csv", true))
-                {
-                    file.WriteLine($"{signUpDetails.Name},{signUpDetails.Username},{signUpDetails.Password},user");
-                }
+                System.IO.File.WriteAllText("loggedInDetails.csv", string.Empty); // Clears contents of file used to store logged in user
             }
-            catch (FileNotFoundException ex)
+            catch
             {
                 throw new ApplicationException("Oopsies!");
             }
         }
 
-        public bool LoginUser(LoginDetails loginDetails)
-        {
-            if (loginDetails is not null)
-            {
-                loggedInUser.Id = loginDetails.Id;
-                loggedInUser.Name = loginDetails.Name;
-                loggedInUser.Username = loginDetails.Username;
-                loggedInUser.Password = loginDetails.Password;
-                loggedInUser.Role = loginDetails.Role;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        public async Task CreateAccountAsync(LoginDetails loginDetails) =>
+            await httpClient.PostAsJsonAsync("accounts", loginDetails);
+
+        public async Task<LoginDetails> LoginUserAsync(string username) =>
+            await httpClient.GetFromJsonAsync<LoginDetails>($"accounts/userAccount/{username}") ?? null!;
+
+        public async Task DeleteAccountAsync(string name) => await httpClient.DeleteAsync($"accounts/userAccount/{name}");
 
         public bool StoreLoggedInDetails(LoginDetails loginDetails)
         {
@@ -64,7 +31,10 @@ namespace StudentManagementSystem.Clients
             {
                 using (StreamWriter file = new StreamWriter(@"loggedInDetails.csv", false))
                 {
-                    file.WriteLine($"{loginDetails.Id},{loginDetails.Name},{loginDetails.Username},{loginDetails.Password},user");
+                    if (loginDetails.Name!.Equals("admin"))
+                        file.WriteLine($"{loginDetails.Id},{loginDetails.Name},{loginDetails.Username},{loginDetails.Password},admin");
+                    else
+                        file.WriteLine($"{loginDetails.Id},{loginDetails.Name},{loginDetails.Username},{loginDetails.Password},user");
                     return true;
                 }
             }
@@ -107,7 +77,7 @@ namespace StudentManagementSystem.Clients
                     }
                 }
             }
-            catch(FileNotFoundException ex)
+            catch (FileNotFoundException ex)
             {
                 return new()
                 {
@@ -126,6 +96,21 @@ namespace StudentManagementSystem.Clients
                 Password = string.Empty,
                 Role = null
             };
+        }
+
+        public static void CreateAccount(SignUpDetails signUpDetails)
+        {
+            try
+            {
+                using (StreamWriter file = new StreamWriter(@"accounts.csv", true))
+                {
+                    file.WriteLine($"{signUpDetails.Name},{signUpDetails.Username},{signUpDetails.Password},user");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ApplicationException("Oopsies!");
+            }
         }
 
         public static void DeleteAccount(StudentDetails studentDetails)

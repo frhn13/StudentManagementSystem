@@ -14,7 +14,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (!LoginClient.GetLoggedInUser().Username.Equals(string.Empty))
+else if (!LoginClient.GetLoggedInDetails().Username.Equals(string.Empty))
 {
     <p>Page inaccessible</p>
 }
@@ -55,6 +55,7 @@ else
 @code {
     [SupplyParameterFromForm]
     private SignUpDetails? signUpDetails { get; set; }
+    private LoginDetails? loginDetails { get; set; }
     protected override void OnParametersSet()
     {
         signUpDetails = new()
@@ -65,10 +66,17 @@ else
                 ConfirmPassword = String.Empty
             };
     }
-    private void HandleSubmit()
+    private async void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(signUpDetails);
-        LoginClient.CreateAccount(signUpDetails);
+        loginDetails = new()
+            {
+                Name = signUpDetails.Name,
+                Username = signUpDetails.Username,
+                Password = signUpDetails.Password,
+                Role = "user"
+            };
+        await LoginClient.CreateAccountAsync(loginDetails);
         NavigationManager.NavigateTo("/Login");
     }
 }

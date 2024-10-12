@@ -5,6 +5,17 @@ namespace StudentManagementSystem.Clients
 {
     public class StudentManagement(HttpClient httpClient)
     {
+
+        public async Task AddNewStudentAsync(StudentDetails studentDetails) => await httpClient.PostAsJsonAsync("students", studentDetails);
+
+        public async Task EditStudentAsync(StudentDetails student) => await httpClient.PutAsJsonAsync($"students/{student.Id}", student);
+
+        public async Task<StudentDetails> GetStudentAsync(int id) => await httpClient.GetFromJsonAsync<StudentDetails>($"students/{id}") ?? throw new Exception("Could now find game!");
+
+        public async Task<StudentDetails[]> ViewAllStudentsAsync() =>
+            await httpClient.GetFromJsonAsync<StudentDetails[]>("students") ?? [];
+
+        public async Task DeleteStudentAsync(int id) => await httpClient.DeleteAsync($"students/{id}");
         public static void AddNewStudent(StudentDetails studentDetails)
         {
             try
@@ -108,34 +119,6 @@ namespace StudentManagementSystem.Clients
                 throw new ApplicationException("Oopsies!");
             }
             return null;
-        }
-
-        public static List<StudentDetails> ViewAllStudents() 
-        {
-            List<StudentDetails> studentDetailsList = [];
-            try
-            {
-                string[] students = System.IO.File.ReadAllLines(@"students.csv");
-                foreach (string student in students)
-                {
-                    string[] studentData = student.Split(',');
-                    StudentDetails details = new StudentDetails
-                    {
-                        Id = int.Parse(studentData[0]),
-                        Name = studentData[1],
-                        Age = int.Parse(studentData[2]),
-                        Year = int.Parse(studentData[3]),
-                        MobileNumber = studentData[4],
-                        DOB = DateOnly.Parse(studentData[5])
-                    };
-                    studentDetailsList.Add(details);
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                throw new ApplicationException("Oopsies!");
-            }
-            return studentDetailsList;
         }
     }
 }
