@@ -2,6 +2,7 @@
 
 @inject LoginClient LoginClient
 @inject NavigationManager NavigationManager
+@inject CourseManagement CourseManagement
 
 @rendermode InteractiveServer
 
@@ -22,7 +23,7 @@ else
 {
     <div class="row">
         <div class="flex-center">
-            <EditForm Model="@courseDetails" FormName="AddStudent" OnValidSubmit="HandleSubmit">
+            <EditForm Model="@courseDetails" FormName="AddStudent" OnValidSubmit="HandleSubmitAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="mb-3">
@@ -81,11 +82,15 @@ else
         heading = "Add a Module";
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmitAsync()
     {
         courseDetails!.Name = LoginClient.GetLoggedInDetails().Name;
-        if (CourseManagement.AddNewModule(courseDetails))
+        if (await CourseManagement.CheckNewModule(courseDetails))
+        {
+            await CourseManagement.AddNewModuleAsync(courseDetails);
             NavigationManager.NavigateTo("/ViewModules");
+        }
+        
     }
 
     private void SetModule(ChangeEventArgs e)

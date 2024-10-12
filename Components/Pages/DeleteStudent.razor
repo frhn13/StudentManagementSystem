@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager navigationManager
 @inject StudentManagement StudentManagement
 @inject LoginClient LoginClient
+@inject CourseManagement CourseManagement
 <!--Interactive server must be declared in modal otherwise page refresh won't function properly-->
 @rendermode InteractiveServer
 
@@ -30,10 +31,11 @@
         return $"deleteModal-{studentDetails.Id}";
     }
 
-    private async Task ConfirmDeletion() // Deletes game when button click
+    private async Task ConfirmDeletion() // Deletes student when button click
     {
+        await CourseManagement.DeleteStudentModulesAsync(studentDetails!.Name);
         await LoginClient.DeleteAccountAsync(studentDetails!.Name);
-        await StudentManagement.DeleteStudentAsync(studentDetails!.Id); // Compiler ignores that the game could be null
+        await StudentManagement.DeleteStudentAsync(studentDetails!.Id); // Compiler ignores that the student could be null
         navigationManager.Refresh();
     }
 }

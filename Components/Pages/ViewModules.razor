@@ -3,17 +3,20 @@
 
 @inject NavigationManager NavigationManager
 @inject LoginClient LoginClient
+@inject StudentManagement StudentManagement
+@inject CourseManagement CourseManagement
 
 <div class="mb-10">
     <PageTitle>View Modules</PageTitle>
-    <h2>View @LoginClient.GetLoggedInDetails().Username's Modules</h2>
+    <h2>View @heading</h2>
 </div>
 
 @if (modules is null)
 {
     <p>Loading...</p>
 }
-else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || (LoginClient.GetLoggedInDetails().Role!.Equals("user") && Id is not null))
+else if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty) || (LoginClient.GetLoggedInDetails().Role!.Equals("admin") && Id is null) || 
+(LoginClient.GetLoggedInDetails().Role!.Equals("user") && Id is not null))
 {
     <p>Page inaccessible</p>
 }
@@ -54,20 +57,22 @@ else
 @code {
     [Parameter]
     public int? Id {get; set;}
-    private List<CourseDetails>? modules;
+    private CourseDetails[]? modules;
     string heading = string.Empty;
 
-    protected override void OnInitialized() // When client initialised then array is populated
+    protected async override Task OnInitializedAsync() // When client initialised then array is populated
     {
         if (Id is null)
         {
-            modules = CourseManagement.ViewModules(LoginClient.GetLoggedInDetails().Name!);
-            heading = $"{LoginClient.GetLoggedInDetails().Username}'s Modules";
+            modules = await CourseManagement.ViewStudentModulesAsync(LoginClient.GetLoggedInDetails().Name!);
+            heading = $"{LoginClient.GetLoggedInDetails().Name}'s Modules";
         }
         else if (Id is not null)
         {
-            StudentDetails student = StudentManagement.GetStudent(Id.Value); // .Value lets you get value even when it is null
-            modules = CourseManagement.ViewModules(student.Name);
+            Console.WriteLine(Id.Value);
+            StudentDetails student = await StudentManagement.GetStudentAsync(Id.Value); // .Value lets you get value even when it is null
+            Console.WriteLine(student.Name);
+            modules = await CourseManagement.ViewStudentModulesAsync(student.Name);
             heading = $"{student.Name}'s Modules";
         }
     }

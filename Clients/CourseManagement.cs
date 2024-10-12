@@ -55,96 +55,28 @@ namespace StudentManagementSystem.Clients
         public static Course[] GetCourseChoices() => courses;
         public static string[][] GetModuleChoices() => modules;
 
-        public static bool AddNewModule(CourseDetails courseDetails)
+        public async Task AddNewModuleAsync(CourseDetails courseDetails) => await httpClient.PostAsJsonAsync("courses", courseDetails);
+        public async Task<CourseDetails[]> ViewStudentModulesAsync(string studentName) => await httpClient.GetFromJsonAsync<CourseDetails[]>($"courses/userCourses/{studentName}") ?? [];
+        public async Task<CourseDetails> ViewModuleAsync(int id) => await httpClient.GetFromJsonAsync<CourseDetails>($"courses/{id}") ?? throw new Exception("Could not find course!");
+        public async Task DeleteModuleAsync(int id) => await httpClient.DeleteAsync($"courses/{id}");
+        public async Task DeleteStudentModulesAsync(string name) => await httpClient.DeleteAsync($"courses/userCourses/{name}");
+
+        public async Task<bool> CheckNewModule(CourseDetails courseDetails)
         {
             int semesterOneModules = 0;
             int semesterTwoModules = 0;
             int semesterThreeModules = 0;
-            try
+            CourseDetails[] previousCourses = await ViewStudentModulesAsync(courseDetails.Name!);
+            foreach (CourseDetails module in previousCourses)
             {
-                List<CourseDetails> previousCourses = ViewModules(courseDetails.Name!);
-                foreach (CourseDetails module in previousCourses)
-                {
-                    if (courseDetails.Name!.Equals(module.Name) && courseDetails.Module.Equals(module.Module)) { return false; }
-                    if (module.Semester == 1) { semesterOneModules++; }
-                    else if (module.Semester == 2) { semesterTwoModules++; }
-                    else { semesterThreeModules++; }
-                }
-                if (courseDetails.Semester == 1 && semesterOneModules >= 5 || courseDetails.Semester == 2 && semesterTwoModules >= 5 || courseDetails.Semester == 3 && semesterThreeModules >= 5)
-                { return false; }
-                int lineCount = File.ReadLines("modules.csv").Count();
-                using (StreamWriter file = new StreamWriter(@"modules.csv", true))
-                {
-                    file.WriteLine($"{lineCount+1},{courseDetails.Name},{courseDetails.Course},{courseDetails.Module},{courseDetails.Semester}");
-                }
-                return true;
+                if (courseDetails.Name!.Equals(module.Name) && courseDetails.Module.Equals(module.Module)) { return false; }
+                if (module.Semester == 1) { semesterOneModules++; }
+                else if (module.Semester == 2) { semesterTwoModules++; }
+                else { semesterThreeModules++; }
             }
-            catch (FileNotFoundException ex)
-            {
-                throw new ApplicationException("Oopsies!");
-            }
-        }
-
-        public static List<CourseDetails> ViewModules(string studentName)
-        {
-            List<CourseDetails> modulesList = [];
-            try
-            {
-                string[] modules = File.ReadAllLines(@"modules.csv");
-                foreach (string module in modules)
-                {
-                    string[] moduleData = module.Split(',');
-                    
-                    if (moduleData[1].Equals(studentName))
-                    {
-                        CourseDetails courseDetails = new()
-                        {
-                            Id = int.Parse(moduleData[0]),
-                            Name = moduleData[1],
-                            Course = moduleData[2],
-                            Module = moduleData[3],
-                            Semester = int.Parse(moduleData[4])
-                        };
-                        modulesList.Add(courseDetails);
-                    }
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                throw new ApplicationException("Oopsies!");
-            }
-            return modulesList;
-        }
-
-        public static void DeleteModule(CourseDetails courseDetails)
-        {
-            string removedModule = "";
-            try
-            {
-                string[] modules = File.ReadAllLines(@"modules.csv");
-                foreach (string module in modules)
-                {
-                    string[] moduleData = module.Split(',');
-                    if (int.Parse(moduleData[0]) == courseDetails.Id)
-                    {
-                        removedModule = module;
-                        break;
-                    }
-                }
-                modules = modules.Where(x => x != removedModule).ToArray();
-                using (StreamWriter file = new StreamWriter(@"modules.csv", false))
-                {
-                    for (int i = 0; i < modules.Length; i++)
-                    {
-                        string[] moduleData = modules[i].Split(',');
-                        file.WriteLine($"{moduleData[0]},{moduleData[1]},{moduleData[2]},{moduleData[3]},{moduleData[4]}");
-                    }
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                throw new ApplicationException("Oopsies!");
-            }
+            if (courseDetails.Semester == 1 && semesterOneModules >= 5 || courseDetails.Semester == 2 && semesterTwoModules >= 5 || courseDetails.Semester == 3 && semesterThreeModules >= 5)
+                return false;
+            return true;
         }
     }
 }

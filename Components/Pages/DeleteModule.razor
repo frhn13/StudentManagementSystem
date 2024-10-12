@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager navigationManager
+@inject CourseManagement CourseManagement
 <!--Interactive server must be declared in modal otherwise page refresh won't function properly-->
 @rendermode InteractiveServer
 
@@ -28,9 +29,9 @@
         return $"deleteModal-{courseDetails.Id}";
     }
 
-    private void ConfirmDeletion() // Deletes game when button click
+    private async Task ConfirmDeletion() // Deletes game when button click
     {
-        CourseManagement.DeleteModule(courseDetails!); // Compiler ignores that the game could be null
+        await CourseManagement.DeleteModuleAsync(courseDetails!.Id); // Compiler ignores that the game could be null
         navigationManager.Refresh();
     }
 }
