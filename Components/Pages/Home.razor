@@ -1,14 +1,14 @@
 ﻿@page "/"
 
-@inject LoginClient LoginClient
+@inject LoginClient loginClient
 
 <PageTitle>Home</PageTitle>
 
-@if (LoginClient.GetLoggedInUser().Username.Equals(String.Empty))
+@if (loginClient.GetLoggedInDetails().Username.Equals(String.Empty))
 {
     <h1>Welcome to the Student Virtual Portal!</h1>
 }
 else
 {
-    <h1>Hello, @LoginClient.GetLoggedInUser().Name!</h1>
+    <h1>Hello, @loginClient.GetLoggedInDetails().Name!</h1>
 }

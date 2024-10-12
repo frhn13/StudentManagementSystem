@@ -13,7 +13,7 @@ namespace StudentManagementSystem.CustomValidators
                 foreach (string account in accounts) // Checks if account already exists with entered name or username
                 {
                     string[] accountData = account.Split(',');
-                    if (accountData[1].Equals(value))
+                    if (accountData[2].Equals(value))
                     {
                         return null;
                     }

@@ -2,7 +2,7 @@
 
 namespace StudentManagementSystem.Clients
 {
-    public class CourseManagement
+    public class CourseManagement(HttpClient httpClient)
     {
         private static readonly Course[] courses =
             [

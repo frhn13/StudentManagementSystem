@@ -7,7 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+var studentInfoStoreApiUrl = builder.Configuration["studentInfoStoreApiUrl"]; // Reads URL from JSON file
+
 builder.Services.AddSingleton<LoginClient>();
+
+builder.Services.AddHttpClient<LoginClient>(
+    client => client.BaseAddress = new Uri(studentInfoStoreApiUrl!)); // Adds URI for backend DB
+
+builder.Services.AddHttpClient<CourseManagement>(
+    client => client.BaseAddress = new Uri(studentInfoStoreApiUrl!));
+
+builder.Services.AddHttpClient<StudentManagement>(
+    client => client.BaseAddress = new Uri(studentInfoStoreApiUrl!));
 
 var app = builder.Build();
 
@@ -19,7 +30,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

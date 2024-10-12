@@ -5,10 +5,11 @@ namespace StudentManagementSystem.Models
 {
     public class LoginDetails
     {
+        public int Id { get; set; }
         public string? Name { get; set; }
         [Required]
         [StringLength(50)]
-        [LoginUsernameValidator]
+        //[LoginUsernameValidator]
         public required string Username { get; set; }
         [Required]
         [StringLength(50)]

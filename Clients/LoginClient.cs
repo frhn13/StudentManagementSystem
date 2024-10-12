@@ -1,20 +1,30 @@
 ﻿using StudentManagementSystem.Models;
+using System.Reflection;
 
 namespace StudentManagementSystem.Clients
 {
-    public class LoginClient
+    public class LoginClient(HttpClient httpClient)
     {
-        private LoginDetails loggedInUser = new() { Username=string.Empty, Password=string.Empty};
+        private LoginDetails loggedInUser = new() { Id=0, Username=string.Empty, Password=string.Empty};
 
         public LoginDetails GetLoggedInUser() => loggedInUser;
 
         public void ResetLogin()
         {
+            loggedInUser.Id = 0;
             loggedInUser.Name = null;
             loggedInUser.Username = string.Empty;
             loggedInUser.Password = string.Empty;
             loggedInUser.Role = null;
         }
+
+        public async Task CreateAccountAsync(SignUpDetails signUpDetails) =>
+            await httpClient.PostAsJsonAsync("accounts", signUpDetails);
+
+        public async Task<LoginDetails> LoginUserAsync(string username) =>
+            await httpClient.GetFromJsonAsync<LoginDetails>($"accounts/userAccount/{username}") ?? null!;
+
+        public async Task DeleteAccountAsync(string name) => await httpClient.DeleteAsync($"accounts/userAccount/{name}");
 
         public static void CreateAccount(SignUpDetails signUpDetails)
         {
@@ -33,28 +43,91 @@ namespace StudentManagementSystem.Clients
 
         public bool LoginUser(LoginDetails loginDetails)
         {
+            if (loginDetails is not null)
+            {
+                loggedInUser.Id = loginDetails.Id;
+                loggedInUser.Name = loginDetails.Name;
+                loggedInUser.Username = loginDetails.Username;
+                loggedInUser.Password = loginDetails.Password;
+                loggedInUser.Role = loginDetails.Role;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool StoreLoggedInDetails(LoginDetails loginDetails)
+        {
             try
             {
-                string[] accounts = System.IO.File.ReadAllLines(@"accounts.csv");
-                foreach (string account in accounts) // Checks if account already exists with entered name or username
+                using (StreamWriter file = new StreamWriter(@"loggedInDetails.csv", false))
                 {
-                    string[] accountData = account.Split(',');
-                    if (accountData[1].Equals(loginDetails.Username) || accountData[2].Equals(loginDetails.Password))
-                    {
-                        loggedInUser.Name = accountData[0];
-                        loggedInUser.Username = accountData[1];
-                        loggedInUser.Password = accountData[2];
-                        loggedInUser.Role = accountData[3];
-                        return true;
-                    }
+                    file.WriteLine($"{loginDetails.Id},{loginDetails.Name},{loginDetails.Username},{loginDetails.Password},user");
+                    return true;
                 }
-                return false;
             }
             catch (FileNotFoundException ex)
             {
-                throw new ApplicationException("Oopsies!");
+                return false;
             }
         }
+
+        public LoginDetails GetLoggedInDetails()
+        {
+            try
+            {
+                string[] userDetails = File.ReadAllLines(@"loggedInDetails.csv");
+                if (userDetails.Length == 0)
+                {
+                    return new()
+                    {
+                        Id = 0,
+                        Name = null,
+                        Username = string.Empty,
+                        Password = string.Empty,
+                        Role = null
+                    };
+                }
+                else
+                {
+                    foreach (string user in userDetails)
+                    {
+                        string[] userData = user.Split(',');
+
+                        return new()
+                        {
+                            Id = int.Parse(userData[0]),
+                            Name = userData[1],
+                            Username = userData[2],
+                            Password = userData[3],
+                            Role = userData[4]
+                        };
+                    }
+                }
+            }
+            catch(FileNotFoundException ex)
+            {
+                return new()
+                {
+                    Id = 0,
+                    Name = null,
+                    Username = string.Empty,
+                    Password = string.Empty,
+                    Role = null
+                };
+            }
+            return new()
+            {
+                Id = 0,
+                Name = null,
+                Username = string.Empty,
+                Password = string.Empty,
+                Role = null
+            };
+        }
+
         public static void DeleteAccount(StudentDetails studentDetails)
         {
             string removedAccount = string.Empty;

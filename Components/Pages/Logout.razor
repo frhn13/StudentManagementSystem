@@ -9,7 +9,7 @@
 
 <h1>Log Out?</h1>
 
-@if (LoginClient.GetLoggedInUser().Username.Equals(string.Empty))
+@if (LoginClient.GetLoggedInDetails().Username.Equals(string.Empty))
 {
     <p>Page inaccessible</p>
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace StudentManagementSystem.Clients
 {
-    public class StudentManagement
+    public class StudentManagement(HttpClient httpClient)
     {
         public static void AddNewStudent(StudentDetails studentDetails)
         {

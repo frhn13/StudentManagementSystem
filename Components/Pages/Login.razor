@@ -1,7 +1,7 @@
 ﻿@page "/Login"
 
 @inject NavigationManager NavigationManager
-@inject LoginClient LoginClient
+@inject LoginClient loginClient
 
 @rendermode InteractiveServer
 
@@ -14,7 +14,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (!LoginClient.GetLoggedInUser().Username.Equals(string.Empty))
+else if (!loginClient.GetLoggedInUser().Username.Equals(string.Empty))
 {
     <p>Page inaccessible</p>
 }
@@ -50,15 +50,20 @@ else
     {
         loginDetails = new()
             {
+                Id = 0,
                 Username = String.Empty,
                 Password = String.Empty
             };
     }
-    private void HandleSubmit()
+    private async void HandleSubmit()
     {
         ArgumentNullException.ThrowIfNull(loginDetails);
-        if (LoginClient.LoginUser(loginDetails))
+        var user = await loginClient.LoginUserAsync(loginDetails.Username);
+        ArgumentNullException.ThrowIfNull(user);
+
+        if (loginClient.StoreLoggedInDetails(user))
         {
+            Console.WriteLine(loginClient.GetLoggedInDetails().Name);
             NavigationManager.NavigateTo("/");
         }
     }
