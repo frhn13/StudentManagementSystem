@@ -1,5 +1,4 @@
 ﻿using StudentManagementSystem.Models;
-using System.Reflection;
 
 namespace StudentManagementSystem.Clients
 {
@@ -19,9 +18,31 @@ namespace StudentManagementSystem.Clients
 
         public async Task CreateAccountAsync(LoginDetails loginDetails) =>
             await httpClient.PostAsJsonAsync("accounts", loginDetails);
-        public async Task<LoginDetails> LoginUserAsync(string username) =>
-            await httpClient.GetFromJsonAsync<LoginDetails>($"accounts/userAccount/{username}") ?? throw new Exception("Could not find User!");
+        public async Task<LoginDetails[]> GetAllUsersAsync() =>
+            await httpClient.GetFromJsonAsync<LoginDetails[]>("accounts") ?? [];
+        public async Task<LoginDetails> LoginUserAsync(string username, string password) =>
+            await httpClient.GetFromJsonAsync<LoginDetails>($"accounts/userAccount/{username}/{password}") ?? throw new Exception("Could not find User!");
         public async Task DeleteAccountAsync(string name) => await httpClient.DeleteAsync($"accounts/userAccount/{name}");
+
+        public async Task StoreAllAccountsAsync()
+        {
+            LoginDetails[] allLoginDetails = await GetAllUsersAsync();
+            try
+            {
+                using(StreamWriter file = new StreamWriter(@"accounts.csv", false))
+                {
+                    foreach (LoginDetails loginDetails in allLoginDetails)
+                    {
+                        file.WriteLine($"{loginDetails.Id},{loginDetails.Name},{loginDetails.Username},{loginDetails.Password},{loginDetails.Role}");
+                    }
+                }
+                
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ApplicationException("Oopsies!");
+            }
+        }
         public bool StoreLoggedInDetails(LoginDetails loginDetails)
         {
             try

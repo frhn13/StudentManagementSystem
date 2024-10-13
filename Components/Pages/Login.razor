@@ -1,7 +1,8 @@
 ﻿@page "/Login"
 
 @inject NavigationManager NavigationManager
-@inject LoginClient loginClient
+@inject LoginClient LoginClient
+@inject StudentManagement StudentManagement
 
 @rendermode InteractiveServer
 
@@ -14,7 +15,7 @@
 {
     <p>Currently Loading...</p>
 }
-else if (!loginClient.GetLoggedInDetails().Username.Equals(string.Empty))
+else if (!LoginClient.GetLoggedInDetails().Username.Equals(string.Empty))
 {
     <p>Page inaccessible</p>
 }
@@ -46,8 +47,10 @@ else
 @code {
     [SupplyParameterFromForm]
     private LoginDetails? loginDetails { get; set; }
-    protected override void OnParametersSet()
+    protected async override Task OnParametersSetAsync()
     {
+        await LoginClient.StoreAllAccountsAsync();
+        await StudentManagement.StoreAllStudentsAsync();
         loginDetails = new()
             {
                 Id = 0,
@@ -55,15 +58,17 @@ else
                 Password = String.Empty
             };
     }
+
     private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(loginDetails);
-        var user = await loginClient.LoginUserAsync(loginDetails.Username);
-        ArgumentNullException.ThrowIfNull(user);
+        var user1 = await LoginClient.LoginUserAsync(loginDetails.Username, loginDetails.Password);
+        // var user2 = await LoginClient.LoginUserAsync2(loginDetails.Password);
+        ArgumentNullException.ThrowIfNull(user1);
 
-        if (loginClient.StoreLoggedInDetails(user))
+        if (LoginClient.StoreLoggedInDetails(user1))
         {
-            Console.WriteLine(loginClient.GetLoggedInDetails().Name);
+            Console.WriteLine(LoginClient.GetLoggedInDetails().Name);
             NavigationManager.NavigateTo("/");
         }
     }

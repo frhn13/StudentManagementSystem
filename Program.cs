@@ -1,5 +1,6 @@
 using StudentManagementSystem.Clients;
 using StudentManagementSystem.Components;
+using StudentManagementSystem.CustomValidators;
 
 var builder = WebApplication.CreateBuilder(args);
 

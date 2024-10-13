@@ -37,7 +37,7 @@ else
                     <td class="text-end">@student.Age</td>
                     <td class="text-end">@student.Year</td>
                     <td>@student.MobileNumber</td>
-                    <td>@student.DOB</td>
+                    <td>@student.DOB.ToString("yyyy-MM-dd")</td>
                     <td>
                         <div class="d-flex">
                             <a class="btn btn-primary me-2" role="button" href="/EditStudent/@student.Id" title="Edit Student Details">

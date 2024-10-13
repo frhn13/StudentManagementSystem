@@ -14,7 +14,7 @@ namespace StudentManagementSystem.CustomValidators
                 foreach (string account in accounts) // Checks if account already exists with entered username
                 {
                     string[] accountData = account.Split(',');
-                    if (accountData[1].Equals(value))
+                    if (accountData[2].Equals(value))
                     {
                         return new ValidationResult("Username has been taken", new[] {validationContext.MemberName});
                     }
